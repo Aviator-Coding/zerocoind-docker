@@ -30,7 +30,7 @@ WORKDIR /zero
 ## Copy logrotate for shriniking logfiles
 #COPY ./scripts/ipsd_logrotate /etc/logrotate.d/
 
-ENV WALLET_VERSION V0.12.1.6
+ENV WALLET_VERSION v0.12.3.2
 
 RUN git clone https://github.com/zocteam/zeroonecoin.git . && \
     git checkout $WALLET_VERSION && \
