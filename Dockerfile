@@ -1,51 +1,21 @@
-FROM ubuntu:16.04
+FROM    frolvlad/alpine-glibc
+LABEL   maintainer="Aviator" \
+        discord="Aviator#1024"
 
-RUN apt-get update && \
-    apt-get --no-install-recommends --yes install \
-         git \
-         automake \
-         build-essential \
-         libtool \
-         autotools-dev \
-         autoconf \
-         pkg-config \
-         libssl-dev \ 
-         libboost-all-dev \
-         libevent-dev \
-         bsdmainutils \
-         vim \
-         software-properties-common && \
-         rm -rf /var/lib/apt/lists/* 
+ENV VERSION=v0.12.3.2
+ENV GITHUB_AUTOR="zocteam"
+ENV GITHUB_REPO="zeroonecoin"
+ENV GITHUB_TAR="zeroonecore-0.12.3-x86_64-linux-gnu.tar.gz"
 
-RUN add-apt-repository ppa:bitcoin/bitcoin && \
-    apt-get update && \
-    apt-get --no-install-recommends --yes install \
-          libdb4.8-dev \
-          libdb4.8++-dev \
-          libminiupnpc-dev && \
-          rm -rf /var/lib/apt/lists/* 
-
-WORKDIR /zero
-
-## Copy logrotate for shriniking logfiles
-#COPY ./scripts/ipsd_logrotate /etc/logrotate.d/
-
-ENV WALLET_VERSION v0.12.3.2
-
-RUN git clone https://github.com/zocteam/zeroonecoin.git . && \
-    git checkout $WALLET_VERSION && \
-    ./autogen.sh && \
-    ./configure && \
-    make &&\
-    strip /zero/src/zerooned /zero/src/zeroone-cli && \
-    mv /zero/src/zerooned /usr/local/bin/ && \
-    mv /zero/src/zeroone-cli /usr/local/bin/ && \
-    # clean
-    rm -rf /zero 
+RUN apk add --no-cache curl && \
+    curl -L https://github.com/$GITHUB_AUTOR/$GITHUB_REPO/releases/download/$VERSION/$GITHUB_TAR | tar zx -C /tmp &&\
+    find /tmp -name "zeroone-cli" -exec cp {} /usr/local/bin \; &&\ 
+    find /tmp -name "zerooned" -exec cp {} /usr/local/bin \; &&\
+    rm -r /tmp/* &&\
+    apk del curl
 
 VOLUME ["/root/.zeroonecore"]
 
-EXPOSE 10000
+EXPOSE 10000/tcp
 
-CMD exec /usr/local/bin/zerooned && tail -f /root/.zerocoin/debug.log
-
+CMD zerooned -printtoconsole
