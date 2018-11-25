@@ -2,7 +2,7 @@ FROM    frolvlad/alpine-glibc
 LABEL   maintainer="Aviator" \
         discord="Aviator#1024"
 
-ENV VERSION=v0.12.3.2
+ENV VERSION=v0.12.3.4
 ENV GITHUB_AUTOR="zocteam"
 ENV GITHUB_REPO="zeroonecoin"
 ENV GITHUB_TAR="zeroonecore-0.12.3-x86_64-linux-gnu.tar.gz"
